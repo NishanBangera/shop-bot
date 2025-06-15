@@ -1,6 +1,6 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { ActionFunctionArgs, LoaderFunctionArgs } from "@remix-run/node";
-import { useFetcher } from "@remix-run/react";
+import { useFetcher, useLoaderData } from "@remix-run/react";
 import {
   Page,
   Layout,
@@ -12,14 +12,20 @@ import {
   List,
   Link,
   InlineStack,
+  Modal,
+  Icon,
 } from "@shopify/polaris";
 import { TitleBar, useAppBridge } from "@shopify/app-bridge-react";
+import { ChatIcon } from "@shopify/polaris-icons";
 import { authenticate } from "../shopify.server";
+import { ChatInterface } from "../components/chatbot/ChatInterface";
 
 export const loader = async ({ request }: LoaderFunctionArgs) => {
   await authenticate.admin(request);
 
-  return null;
+  return {
+    sessionId: `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  };
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -92,7 +98,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
 };
 
 export default function Index() {
+  const { sessionId } = useLoaderData<typeof loader>();
   const fetcher = useFetcher<typeof action>();
+  const [isChatOpen, setIsChatOpen] = useState(false);
 
   const shopify = useAppBridge();
   const isLoading =
@@ -112,9 +120,12 @@ export default function Index() {
 
   return (
     <Page>
-      <TitleBar title="Remix app template">
+      <TitleBar title="ShopBot - AI Shopping Assistant">
         <button variant="primary" onClick={generateProduct}>
           Generate a product
+        </button>
+        <button onClick={() => setIsChatOpen(true)}>
+          Open AI Assistant
         </button>
       </TitleBar>
       <BlockStack gap="500">
@@ -329,6 +340,37 @@ export default function Index() {
           </Layout.Section>
         </Layout>
       </BlockStack>
+
+      {/* Floating Chat Button */}
+      <div
+        style={{
+          position: "fixed",
+          bottom: "20px",
+          right: "20px",
+          zIndex: 1000,
+        }}
+      >
+        <Button
+          variant="primary"
+          size="large"
+          icon={ChatIcon}
+          onClick={() => setIsChatOpen(true)}
+        >
+          Chat Assistant
+        </Button>
+      </div>
+
+      {/* Chat Modal */}
+      <Modal
+        open={isChatOpen}
+        onClose={() => setIsChatOpen(false)}
+        title="AI Shopping Assistant"
+        large
+      >
+        <Modal.Section>
+          <ChatInterface sessionId={sessionId} />
+        </Modal.Section>
+      </Modal>
     </Page>
   );
 }

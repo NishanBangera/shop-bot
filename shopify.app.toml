@@ -3,11 +3,12 @@
 client_id = "9541323ce2b4bea093a3987e3c462f9c"
 name = "ShopBot"
 handle = "shopbot-19"
-application_url = "https://example.com/"
+application_url = "https://correspondence-screensavers-worldwide-relatively.trycloudflare.com"
 embedded = true
 
 [build]
 include_config_on_deploy = true
+automatically_update_urls_on_dev = true
 
 [webhooks]
 api_version = "2025-04"
@@ -25,7 +26,11 @@ api_version = "2025-04"
 scopes = "write_products"
 
 [auth]
-redirect_urls = [ "https://example.com/api/auth" ]
+redirect_urls = [
+  "https://correspondence-screensavers-worldwide-relatively.trycloudflare.com/auth/callback",
+  "https://correspondence-screensavers-worldwide-relatively.trycloudflare.com/auth/shopify/callback",
+  "https://correspondence-screensavers-worldwide-relatively.trycloudflare.com/api/auth/callback"
+]
 
 [pos]
 embedded = false

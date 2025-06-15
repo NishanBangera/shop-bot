@@ -1,8 +1,47 @@
-# Shopify App Template - Remix
+# ShopBot - AI-Powered Shopify Chatbot
 
-This is a template for building a [Shopify app](https://shopify.dev/docs/apps/getting-started) using the [Remix](https://remix.run) framework.
+This is a comprehensive Shopify app built with [Remix](https://remix.run) that features an intelligent AI shopping assistant powered by Google's Generative AI and Model Context Protocol (MCP).
 
-Rather than cloning this repo, you can use your preferred package manager and the Shopify CLI with [these steps](https://shopify.dev/docs/apps/getting-started/create).
+## 🤖 AI Shopping Assistant Features
+
+- **Natural Language Product Search**: Customers can search for products using conversational language
+- **Smart Cart Management**: Add, remove, and modify cart items through chat
+- **Checkout Assistance**: Guide customers through the purchase process
+- **Order Status Tracking**: Real-time order status updates and tracking information
+- **Contextual Conversations**: Maintains conversation context for personalized shopping experiences
+- **Multi-device Support**: Responsive design that works on desktop and mobile
+
+## 🏗️ Technical Architecture
+
+### Core Components
+
+1. **MCP Server** (`app/services/mcp-server.ts`)
+   - Implements Model Context Protocol with 6 core tools
+   - Handles product queries, cart operations, and order management
+   - Integrates with Shopify Admin API
+
+2. **Google AI Service** (`app/services/google-ai.ts`)
+   - Natural language processing and intent recognition
+   - Conversation context management
+   - Tool call orchestration
+
+3. **Shopify API Service** (`app/services/shopify-api.ts`)
+   - Enhanced Shopify GraphQL API integration
+   - Product search, order tracking, and checkout creation
+
+4. **Chat Interface** (`app/components/chatbot/ChatInterface.tsx`)
+   - Modern, responsive chat UI with message bubbles
+   - Real-time typing indicators and loading states
+   - Quick action buttons for common tasks
+
+### Available MCP Tools
+
+- `query_products`: Search and retrieve product information
+- `create_cart`: Initialize a new shopping cart session
+- `add_to_cart`: Add specified products with quantities to cart
+- `remove_from_cart`: Remove items from existing cart
+- `begin_checkout`: Initiate the checkout process
+- `order_status`: Check status of existing orders
 
 Visit the [`shopify.dev` documentation](https://shopify.dev/docs/api/shopify-app-remix) for more details on the Remix app package.
 
@@ -15,10 +54,13 @@ Before you begin, you'll need the following:
 1. **Node.js**: [Download and install](https://nodejs.org/en/download/) it if you haven't already.
 2. **Shopify Partner Account**: [Create an account](https://partners.shopify.com/signup) if you don't have one.
 3. **Test Store**: Set up either a [development store](https://help.shopify.com/en/partners/dashboard/development-stores#create-a-development-store) or a [Shopify Plus sandbox store](https://help.shopify.com/en/partners/dashboard/managing-stores/plus-sandbox-store) for testing your app.
+4. **Google AI API Key**: Get your API key from [Google AI Studio](https://makersuite.google.com/app/apikey) for the chatbot functionality.
 
 ### Setup
 
 If you used the CLI to create the template, you can skip this section.
+
+1. **Install Dependencies**
 
 Using yarn:
 
@@ -37,6 +79,35 @@ Using pnpm:
 ```shell
 pnpm install
 ```
+
+2. **Environment Configuration**
+
+Copy the example environment file and configure your API keys:
+
+```shell
+cp .env.example .env
+```
+
+Update the `.env` file with your credentials:
+
+```env
+# Shopify App Configuration
+SHOPIFY_API_KEY=your_shopify_api_key_here
+SHOPIFY_API_SECRET=your_shopify_api_secret_here
+SCOPES=write_products,read_orders,write_draft_orders
+SHOPIFY_APP_URL=https://your-app-url.com
+
+# Database
+DATABASE_URL="file:./dev.sqlite"
+
+# Google AI Configuration (Required for chatbot)
+GOOGLE_AI_API_KEY=your_google_ai_api_key_here
+
+# Optional: Custom shop domain
+SHOP_CUSTOM_DOMAIN=your-custom-domain.com
+```
+
+**Important**: The `GOOGLE_AI_API_KEY` is required for the AI chatbot functionality. Get your free API key from [Google AI Studio](https://makersuite.google.com/app/apikey).
 
 ### Local Development
 
@@ -61,6 +132,43 @@ pnpm run dev
 Press P to open the URL to your app. Once you click install, you can start development.
 
 Local development is powered by [the Shopify CLI](https://shopify.dev/docs/apps/tools/cli). It logs into your partners account, connects to an app, provides environment variables, updates remote config, creates a tunnel and provides commands to generate extensions.
+
+## 🚀 Using the AI Shopping Assistant
+
+Once your app is installed and running:
+
+1. **Access the Chatbot**: Navigate to "AI Shopping Assistant" in your app's navigation menu
+2. **Start Chatting**: The AI assistant will greet you and help with various shopping tasks
+3. **Try These Commands**:
+   - "Show me running shoes"
+   - "I'm looking for a winter jacket under $100"
+   - "Add this product to my cart"
+   - "What's in my cart?"
+   - "Help me checkout"
+   - "Check my order status #12345"
+
+### Example Conversations
+
+**Product Search:**
+```
+User: "I need a gift for my mom, something under $50"
+AI: "I'd love to help you find the perfect gift! Let me search for products under $50..."
+[Shows relevant products with prices and descriptions]
+```
+
+**Cart Management:**
+```
+User: "Add the blue sweater to my cart"
+AI: "I'll add the blue sweater to your cart! Let me set that up for you..."
+[Creates cart and adds item]
+```
+
+**Order Tracking:**
+```
+User: "Where is my order #12345?"
+AI: "Let me check the status of order #12345..."
+[Shows order status, tracking info, and delivery details]
+```
 
 ### Authenticating and querying data
 
